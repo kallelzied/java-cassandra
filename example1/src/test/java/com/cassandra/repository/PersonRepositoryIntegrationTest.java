@@ -95,68 +95,70 @@ public class PersonRepositoryIntegrationTest {
         Person savedPerson = personRepository.selectByAge(27);
         assertEquals(person.getAge(), savedPerson.getAge());
     }
-/*
+
     @Test
     public void whenAddingANewPersonBatch_ThenPersonAddedInAllTables() {
         // Create table persons
         personRepository.deleteTable(PERSON);
         personRepository.createTable();
-
-        // Create table personsByTitle
+        personRepository.alterTablepersons("age", "int");
+        // Create table personsByAge
         personRepository.deleteTable(PERSON_BY_AGE);
         personRepository.createTablePersonsByAge();
 
-        String title = "Effective Java";
-        String author = "Joshua Bloch";
-        Person person = new Person(UUIDs.timeBased(), title, author, "Programming");
+
+        String firstName = "Zied";
+        String lastName = "Kallel";
+        Person person = new Person(UUIDs.timeBased(), firstName, lastName, 27, "kallelzied@gmail.com");
+
         personRepository.insertPersonBatch(person);
 
         List<Person> persons = personRepository.selectAll();
 
         assertEquals(1, persons.size());
-        assertTrue(persons.stream().anyMatch(b -> b.getTitle().equals("Effective Java")));
+        assertTrue(persons.stream().anyMatch(b -> b.getFirstName().equals("Zied")));
 
-        List<Person> personsByTitle = personRepository.selectAllPersonByTitle();
+        List<Person> personsByAge = personRepository.selectAllPersonByAge();
 
-        assertEquals(1, personsByTitle.size());
-        assertTrue(personsByTitle.stream().anyMatch(b -> b.getTitle().equals("Effective Java")));
+        assertEquals(1, personsByAge.size());
+        assertTrue(personsByAge.stream().anyMatch(b -> b.getAge() == 27));
     }
 
     @Test
     public void whenSelectingAll_thenReturnAllRecords() {
         personRepository.deleteTable(PERSON);
         personRepository.createTable();
+        personRepository.alterTablepersons("age", "int");
+        Person person = new Person(UUIDs.timeBased(), "Zied","Kallel", 27, "dev@github.com");
+        personRepository.insertPerson(person);
 
-        Person person = new Person(UUIDs.timeBased(), "Effective Java", "Joshua Bloch", "Programming");
-        personRepository.insertperson(person);
-
-        person = new Person(UUIDs.timeBased(), "Clean Code", "Robert C. Martin", "Programming");
-        personRepository.insertperson(person);
+        person = new Person(UUIDs.timeBased(), "Mike","Brown", 55, "Programming@github.com");
+        personRepository.insertPerson(person);
 
         List<Person> persons = personRepository.selectAll();
 
         assertEquals(2, persons.size());
-        assertTrue(persons.stream().anyMatch(b -> b.getTitle().equals("Effective Java")));
-        assertTrue(persons.stream().anyMatch(b -> b.getTitle().equals("Clean Code")));
+        assertTrue(persons.stream().anyMatch(b -> b.getFirstName().equals("Zied")));
+        assertTrue(persons.stream().anyMatch(b -> b.getLastName().equals("Brown")));
     }
 
     @Test
     public void whenDeletingAPersonByTitle_thenPersonIsDeleted() {
         personRepository.deleteTable(PERSON_BY_AGE);
-        personRepository.createTablePersonsByTitle();
+        personRepository.createTablePersonsByAge();
 
-        Person person = new Person(UUIDs.timeBased(), "Effective Java", "Joshua Bloch", "Programming");
-        personRepository.insertpersonByTitle(person);
+        Person person = new Person(UUIDs.timeBased(), "Zied","Kallel", 27, "dev@github.com");
+        personRepository.insertPersonByAge(person);
 
-        person = new Person(UUIDs.timeBased(), "Clean Code", "Robert C. Martin", "Programming");
-        personRepository.insertpersonByTitle(person);
+        person = new Person(UUIDs.timeBased(), "Mike","Brown", 55, "Programming@github.com");
+        personRepository.insertPersonByAge(person);
 
-        personRepository.deletepersonByTitle("Clean Code");
+        personRepository.deletePersonByAge(27);
 
-        List<Person> persons = personRepository.selectAllPersonByTitle();
+        List<Person> persons = personRepository.selectAllPersonByAge();
         assertEquals(1, persons.size());
-        assertTrue(persons.stream().anyMatch(b -> b.getTitle().equals("Effective Java")));
-        assertFalse(persons.stream().anyMatch(b -> b.getTitle().equals("Clean Code")));
+        assertTrue(persons.stream().anyMatch(b -> b.getAge() == 55));
+        assertFalse(persons.stream().anyMatch(b -> b.getAge() == 27));
 
     }
 
@@ -166,7 +168,7 @@ public class PersonRepositoryIntegrationTest {
         personRepository.deleteTable(PERSON);
 
         session.execute("SELECT * FROM " + KEYSPACE_NAME + "." + PERSON + ";");
-    }*/
+    }
 
     @AfterClass
     public static void cleanup() {
